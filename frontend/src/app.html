@@ -5,12 +5,12 @@
     <link rel="icon" href="%sveltekit.assets%/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- ✅ Clerk Embed Script (production safe) -->
+    <!-- ✅ Clerk Global Script -->
     <script async crossorigin src="https://cdn.clerk.dev/clerk.js"></script>
     <script>
       window.Clerk ||= {};
       window.Clerk.load({
-        publishableKey: "pk_test_ZWFzeS1qYXZlbGluLTQuY2xlcmsuYWNjb3VudHMuZGV2JA" 
+        publishableKey: "pk_test_ZWFzeS1qYXZlbGluLTQuY2xlcmsuYWNjb3VudHMuZGV2JA"
       });
     </script>
 
@@ -20,3 +20,4 @@
     <div style="display: contents">%sveltekit.body%</div>
   </body>
 </html>
+

@@ -61,9 +61,9 @@
 	}
 
 	function outputLengthClass(count) {
-		if (count < 50) return "Short";
-		if (count < 150) return "Medium";
-		return "Long";
+		if (count < 50) return "short";
+		if (count < 150) return "medium";
+		return "long";
 	}
 
 	function jaccardSim(a, b) {
@@ -112,12 +112,12 @@
 	<hr />
 
 	<label>🔑 OpenRouter API Key</label>
-	<input type="text" bind:value={apiKey} placeholder="sk-..." style="width: 100%; padding: 0.5rem; margin-bottom: 1rem;" />
+	<input type="text" bind:value={apiKey} placeholder="sk-..." />
 
 	<label>📝 Prompt</label>
-	<textarea bind:value={prompt} rows="4" placeholder="Enter your prompt here..." style="width: 100%; padding: 0.5rem;"></textarea>
+	<textarea bind:value={prompt} rows="4" placeholder="Enter your prompt here..."></textarea>
 
-	<h3 style="margin-top: 1rem;">🤖 Choose Models:</h3>
+	<h3>🤖 Choose Models:</h3>
 
 	{#if Object.keys(models).length > 0}
 		<div class="model-list">
@@ -132,7 +132,7 @@
 		<p>📡 Loading models...</p>
 	{/if}
 
-	<button on:click={handleCompare} style="margin-top: 1rem; padding: 0.5rem 1.5rem;">Compare</button>
+	<button on:click={handleCompare}>Compare</button>
 
 	{#if isLoading}
 		<p>Loading model outputs...</p>
@@ -153,7 +153,7 @@
 			</thead>
 			<tbody>
 				{#each Object.entries(results) as [model, output]}
-					<tr class={outputLengthClass(tokenCount(output)).toLowerCase()}>
+					<tr class={outputLengthClass(tokenCount(output))}>
 						<td>{model}</td>
 						<td>{tokenCount(output)}</td>
 						<td>{entropy(output)}</td>
@@ -185,3 +185,107 @@
 		{/each}
 	{/if}
 </main>
+
+<style>
+	main {
+		max-width: 1000px;
+		margin: auto;
+		padding: 2rem;
+		font-family: 'Segoe UI', sans-serif;
+	}
+
+	h1 {
+		color: #5c67f2;
+	}
+
+	label {
+		display: block;
+		margin: 0.25rem 0;
+		font-weight: bold;
+		color: #333;
+	}
+
+	input[type="text"],
+	textarea {
+		width: 100%;
+		padding: 0.6rem;
+		margin-bottom: 1rem;
+		border-radius: 6px;
+		border: 1px solid #ccc;
+		background-color: #f9f9ff;
+		font-size: 1rem;
+	}
+
+	.model-list {
+		columns: 2;
+		max-width: 800px;
+		margin-top: 0.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.model-list label {
+		display: block;
+		margin-bottom: 0.3rem;
+		color: #444;
+	}
+
+	button {
+		background-color: #5c67f2;
+		color: white;
+		border: none;
+		border-radius: 6px;
+		padding: 0.6rem 1.5rem;
+		cursor: pointer;
+		font-size: 1rem;
+	}
+
+	button:hover {
+		background-color: #4753d6;
+	}
+
+	.card {
+		background: #f4f7ff;
+		padding: 1rem;
+		border-radius: 8px;
+		box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+		margin-bottom: 1.5rem;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1rem 0;
+		font-size: 0.95rem;
+	}
+
+	th {
+		background: #e0e7ff;
+		padding: 0.6rem;
+		text-align: center;
+		border-bottom: 2px solid #ccc;
+		color: #333;
+	}
+
+	td {
+		padding: 0.6rem;
+		text-align: center;
+		border-bottom: 1px solid #eee;
+	}
+
+	tr:nth-child(even) {
+		background-color: #f8faff;
+	}
+
+	.short { background: #e0f7fa; }
+	.medium { background: #fff3cd; }
+	.long { background: #ffe0e0; }
+
+	.diff-add {
+		background: #c6f6d5;
+	}
+
+	.diff-remove {
+		background: #feb2b2;
+		text-decoration: line-through;
+	}
+</style>

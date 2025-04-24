@@ -11,7 +11,7 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch("http://llmbox.onrender.models");
+			const res = await fetch("http://llmbox.onrender.com/models");
 			const modelList = await res.json();
 			const updatedModels = Object.fromEntries(modelList.map(m => [m, false]));
 			models = { ...updatedModels };

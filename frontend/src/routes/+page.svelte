@@ -11,7 +11,7 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch("http://localhost:8000/models");
+			const res = await fetch("http://llmbox.onrender.models");
 			const modelList = await res.json();
 			const updatedModels = Object.fromEntries(modelList.map(m => [m, false]));
 			models = { ...updatedModels };
@@ -89,7 +89,7 @@
 		error = "";
 		results = {};
 		try {
-			const response = await fetch("http://localhost:8000/compare", {
+			const response = await fetch("http://llmbox.onrender.com/compare", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ prompt, models, user_key: apiKey })

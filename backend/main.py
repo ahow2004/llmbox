@@ -23,7 +23,9 @@ app.add_middleware(
 def fetch_valid_models() -> Dict[str, str]:
     """Fetch all free OpenRouter models with $0 input and output token cost."""
     try:
+        api_key = os.getenv("OPENROUTER_API_KEY")
         headers = {
+            "Authorization": f"Bearer {api_key}",
             "User-Agent": "LLMBox/0.1",
             "Accept": "application/json"
         }
@@ -39,7 +41,7 @@ def fetch_valid_models() -> Dict[str, str]:
             input_price = pricing.get("usd_per_million_input_tokens", 999)
             output_price = pricing.get("usd_per_million_output_tokens", 999)
 
-            if input_price == 0 and output_price == 0:
+            if input_price == 0 and output_price == 0 and model.get("endpoints"):
                 name = model.get("name", model_id)
                 valid_models[name] = model_id + ":free"
 
@@ -80,7 +82,7 @@ def compare_models(data: PromptRequest):
     results = {}
 
     for model_key, enabled in data.models.items():
-        if enabled:
+        if enabled and model_key in model_map:
             try:
                 response = client.chat.completions.create(
                     model=model_map[model_key],

@@ -1,14 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { diffWords } from 'diff';
-	import {
-		SignedIn,
-		SignedOut,
-		SignIn,
-		SignUp,
-		UserButton,
-		useAuth
-	} from 'clerk-sveltekit/client';
+	import { Clerk } from '@clerk/clerk-js';
 
 	let apiKey = "";
 	let prompt = "";

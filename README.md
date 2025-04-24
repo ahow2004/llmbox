@@ -1,4 +1,4 @@
-# LLMBox
+# LLMBox 
 
 LLMBox is a web-based tool designed to help developers, researchers, and AI enthusiasts evaluate and compare the behavior of large language models (LLMs) side by side. It focuses on providing practical, interpretable metrics that give insight into how LLMs generate language—and how their outputs differ.
 

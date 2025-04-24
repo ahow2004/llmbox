@@ -1,6 +1,14 @@
 <script>
 	import { onMount } from 'svelte';
 	import { diffWords } from 'diff';
+	import {
+		SignedIn,
+		SignedOut,
+		SignIn,
+		SignUp,
+		UserButton,
+		useAuth
+	} from 'clerk-sveltekit/client';
 
 	let apiKey = "";
 	let prompt = "";
@@ -8,6 +16,8 @@
 	let error = "";
 	let results = {};
 	let models = {};
+
+	const { userId, sessionId } = useAuth();
 
 	onMount(async () => {
 		try {
@@ -136,82 +146,91 @@
 </style>
 
 <main>
-	<h1>🧠 LLMBox</h1>
-	<p>Compare LLM outputs with side-by-side differences and meaningful output metrics.</p>
+	<SignedOut>
+		<h2>Please sign in to use LLMBox</h2>
+		<SignIn redirectUrl="/" />
+		<SignUp redirectUrl="/" />
+	</SignedOut>
 
-	<hr />
+	<SignedIn>
+		<UserButton />
+		<h1>🧠 LLMBox</h1>
+		<p>Compare LLM outputs with side-by-side differences and meaningful output metrics.</p>
 
-	<label>🔑 OpenRouter API Key</label>
-	<input type="text" bind:value={apiKey} placeholder="sk-..." style="width: 100%; padding: 0.5rem; margin-bottom: 1rem;" />
+		<hr />
 
-	<label>📝 Prompt</label>
-	<textarea bind:value={prompt} rows="4" placeholder="Enter your prompt here..." style="width: 100%; padding: 0.5rem;"></textarea>
+		<label>🔑 OpenRouter API Key</label>
+		<input type="text" bind:value={apiKey} placeholder="sk-..." style="width: 100%; padding: 0.5rem; margin-bottom: 1rem;" />
 
-	<h3 style="margin-top: 1rem;">🤖 Choose Models:</h3>
+		<label>📝 Prompt</label>
+		<textarea bind:value={prompt} rows="4" placeholder="Enter your prompt here..." style="width: 100%; padding: 0.5rem;"></textarea>
 
-	{#if Object.keys(models).length > 0}
-		<div class="model-list">
-			{#each Object.keys(models) as model}
-				<label>
-					<input type="checkbox" bind:checked={models[model]} />
-					{model}
-				</label>
-			{/each}
-		</div>
-	{:else}
-		<p>📡 Loading models...</p>
-	{/if}
+		<h3 style="margin-top: 1rem;">🤖 Choose Models:</h3>
 
-	<button on:click={handleCompare} style="margin-top: 1rem; padding: 0.5rem 1.5rem;">Compare</button>
-
-	{#if isLoading}
-		<p>Loading model outputs...</p>
-	{:else if error}
-		<p style="color: red;">{error}</p>
-	{:else if Object.keys(results).length > 0}
-		<h2>📊 Output Metrics Comparison</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>Model</th>
-					<th>Token Count</th>
-					<th>Entropy</th>
-					<th>Repetition</th>
-					<th>Compression</th>
-					<th>Length</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each Object.entries(results) as [model, output]}
-					<tr class={outputLengthClass(tokenCount(output)).toLowerCase()}>
-						<td>{model}</td>
-						<td>{tokenCount(output)}</td>
-						<td>{entropy(output)}</td>
-						<td>{repetitionScore(output)}</td>
-						<td>{compressionRatio(output)}</td>
-						<td>{outputLengthClass(tokenCount(output))}</td>
-					</tr>
+		{#if Object.keys(models).length > 0}
+			<div class="model-list">
+				{#each Object.keys(models) as model}
+					<label>
+						<input type="checkbox" bind:checked={models[model]} />
+						{model}
+					</label>
 				{/each}
-			</tbody>
-		</table>
-
-		<h2>📤 Model Outputs</h2>
-		{#each Object.entries(results) as [model, output]}
-			<div class="card">
-				<h3>{model}</h3>
-				<pre>{output}</pre>
 			</div>
-		{/each}
+		{:else}
+			<p>📡 Loading models...</p>
+		{/if}
 
-		<h2>🧾 Output Differences</h2>
-		{#each Object.entries(results) as [modelA, dataA], i}
-			{#each Object.entries(results).slice(i + 1) as [modelB, dataB]}
+		<button on:click={handleCompare} style="margin-top: 1rem; padding: 0.5rem 1.5rem;">Compare</button>
+
+		{#if isLoading}
+			<p>Loading model outputs...</p>
+		{:else if error}
+			<p style="color: red;">{error}</p>
+		{:else if Object.keys(results).length > 0}
+			<h2>📊 Output Metrics Comparison</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Model</th>
+						<th>Token Count</th>
+						<th>Entropy</th>
+						<th>Repetition</th>
+						<th>Compression</th>
+						<th>Length</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each Object.entries(results) as [model, output]}
+						<tr class={outputLengthClass(tokenCount(output)).toLowerCase()}>
+							<td>{model}</td>
+							<td>{tokenCount(output)}</td>
+							<td>{entropy(output)}</td>
+							<td>{repetitionScore(output)}</td>
+							<td>{compressionRatio(output)}</td>
+							<td>{outputLengthClass(tokenCount(output))}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+
+			<h2>📤 Model Outputs</h2>
+			{#each Object.entries(results) as [model, output]}
 				<div class="card">
-					<h3>{modelA} vs {modelB}</h3>
-					<p><strong>Jaccard similarity:</strong> {jaccardSim(dataA, dataB)}</p>
-					<pre>{@html formatDiff(diffWords(dataA, dataB))}</pre>
+					<h3>{model}</h3>
+					<pre>{output}</pre>
 				</div>
 			{/each}
-		{/each}
-	{/if}
+
+			<h2>🧾 Output Differences</h2>
+			{#each Object.entries(results) as [modelA, dataA], i}
+				{#each Object.entries(results).slice(i + 1) as [modelB, dataB]}
+					<div class="card">
+						<h3>{modelA} vs {modelB}</h3>
+						<p><strong>Jaccard similarity:</strong> {jaccardSim(dataA, dataB)}</p>
+						<pre>{@html formatDiff(diffWords(dataA, dataB))}</pre>
+					</div>
+				{/each}
+			{/each}
+		{/if}
+	</SignedIn>
 </main>

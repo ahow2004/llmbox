@@ -1,8 +1,8 @@
-<script lang="ts">
-  import { ClerkProvider } from 'clerk-sveltekit/client';
-  import { PUBLIC_CLERK_PUBLISHABLE_KEY } from '$env/static/public';
+<!-- src/routes/+layout.svelte -->
+<script>
+  import { ClerkProvider } from '@clerk/clerk-js';
 </script>
 
-<ClerkProvider publishableKey={PUBLIC_CLERK_PUBLISHABLE_KEY}>
+<ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
   <slot />
 </ClerkProvider>

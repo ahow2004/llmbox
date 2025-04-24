@@ -2,4 +2,9 @@
   import { browser } from '$app/environment';
 </script>
 
-<slot />
+{#if browser}
+  <slot />
+{:else}
+  <!-- SSR fallback -->
+  <slot />
+{/if}
